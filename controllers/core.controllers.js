@@ -6,10 +6,8 @@ exports.getEndPoints = (req, res, next) => {
       "/home/aude/northcoders/back-end/be-nc-news/endpoints.json",
       "utf-8"
     )
+
     .then((data) => {
-      return data;
-    })
-    .then((data) => {
-      res.status(200).send({ data });
+      res.status(200).send({ endPoints: JSON.parse(data) });
     });
 };
