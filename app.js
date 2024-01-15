@@ -2,7 +2,10 @@ const express = require("express");
 const app = express();
 const { getTopics } = require("./controllers/topics.controllers");
 const { getEndPoints } = require("./controllers/core.controllers");
-const { getArticleById } = require("./controllers/articles.controllers");
+const {
+  getArticleById,
+  getArticles,
+} = require("./controllers/articles.controllers");
 app.use(express.json());
 //CORE method
 app.get("/api", getEndPoints);
@@ -11,6 +14,7 @@ app.get("/api", getEndPoints);
 app.get("/api/topics", getTopics);
 
 //ARTICLES methods
+app.get("/api/articles", getArticles);
 app.get("/api/articles/:id", getArticleById);
 
 //invalid syntax in SQL query

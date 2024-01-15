@@ -1,4 +1,7 @@
-const { fetchArticleById } = require("../models/articles.models");
+const {
+  fetchArticleById,
+  fetchAllArticles,
+} = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
   const artId = req.params.id;
@@ -8,6 +11,19 @@ exports.getArticleById = (req, res, next) => {
       res.status(200).send(article);
     })
     .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getArticles = (req, res, next) => {
+  fetchAllArticles()
+    .then((articles) => {
+      console.log(articles, "<<<here in controller");
+      res.status(200).send(articles);
+    })
+    .catch((err) => {
+      console.log(err);
+
       next(err);
     });
 };
