@@ -3,9 +3,9 @@ const app = require("../app.js");
 const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index.js");
+const endPointsInfo = require("../endpoints.json");
 
 afterAll(() => db.end());
-//console.log(testData);
 
 beforeEach(() => seed(testData));
 
@@ -31,6 +31,14 @@ describe("app", () => {
         .expect(404)
         .then((res) => {
           expect(res.body.msg).toBe("URL not found");
+        });
+    });
+    test("GET /api should return an object describing all the available endpoints and status 200", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then((object) => {
+          expect(object.toString()).toEqual(endPointsInfo.toString());
         });
     });
   });
