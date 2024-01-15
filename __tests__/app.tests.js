@@ -15,14 +15,22 @@ describe("app", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then((res) => {
-          expect(res.body.length).toBe(3);
-          res.body.forEach((topic) => {
+        .then(({ body }) => {
+          expect(body.topics.length).toBe(3);
+          body.topics.forEach((topic) => {
             expect(typeof topic.description).toBe("string");
             expect(typeof topic.slug).toBe("string");
           });
         });
     });
+    // test("GET /api/topics should return status 500 in case of server error", () => {
+    //   return request(app)
+    //     .get("/api/topic")
+    //     .expect(500)
+    //     .then(({ body }) => {
+    //       expect(body.msg).toBe("internal server error");
+    //     });
+    // });
   });
   describe("/api", () => {
     test("Incorrect url sends back 404 path not found", () => {
