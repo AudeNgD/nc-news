@@ -2,12 +2,25 @@ const express = require("express");
 const app = express();
 const { getTopics } = require("./controllers/topics.controllers");
 const { getEndPoints } = require("./controllers/core.controllers");
-
+const { getArticleById } = require("./controllers/articles.controllers");
+app.use(express.json());
 //CORE method
 app.get("/api", getEndPoints);
 
 //TOPICS methods
 app.get("/api/topics", getTopics);
+
+//ARTICLES methods
+app.get("/api/articles/:id", getArticleById);
+
+//invalid syntax in SQL query
+app.use((err, req, res, next) => {
+  if (err.code === "22P02") {
+    res.status(400).send({ msg: "Bad request" });
+  } else {
+    next(err);
+  }
+});
 
 //CUSTOM errors
 app.use((err, req, res, next) => {
