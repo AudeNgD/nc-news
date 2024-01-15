@@ -1,3 +1,4 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+SET-UP
+Create .env.test and .env.development files. Into each, add PGDATABASE name for that environment. The names are listed in the /db/setup.sql file.
