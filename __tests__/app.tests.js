@@ -24,6 +24,34 @@ describe("app", () => {
         });
     });
   });
+  describe("/api/articles", () => {
+    test("GET /api/articles should return an array of article objects with correct properties", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).toEqual(13);
+          body.forEach((article) => {
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.votes).toBe("number");
+            expect(typeof article.article_img_url).toBe("string");
+            expect(typeof article.comment_count).toBe("string");
+          });
+        });
+    });
+    test("by default the articles are sorted by date in ascending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSorted({ key: "created_at", descending: true });
+        });
+    });
+  });
   describe("/api/articles/:article_id", () => {
     test("GET /api/articles/:article_id should return the relevant article and status 200", () => {
       return request(app)
