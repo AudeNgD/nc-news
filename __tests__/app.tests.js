@@ -58,19 +58,20 @@ describe("app", () => {
         .get("/api/articles/1")
         .expect(200)
         .then(({ body }) => {
-          let count = 0;
-          for (let key in body) {
-            count += 1;
-          }
-          expect(count).toEqual(8);
-          expect(typeof body.author).toBe("string");
-          expect(typeof body.title).toBe("string");
-          expect(typeof body.article_id).toBe("number");
-          expect(typeof body.body).toBe("string");
-          expect(typeof body.topic).toBe("string");
-          expect(typeof body.created_at).toBe("string");
-          expect(typeof body.votes).toBe("number");
-          expect(typeof body.article_img_url).toBe("string");
+          console.log(body.article);
+          expect(Object.keys(body.article).length).toEqual(8);
+          expect(body.article.author).toBe("butter_bridge");
+          expect(body.article.title).toBe(
+            "Living in the shadow of a great man"
+          );
+          expect(body.article.article_id).toBe(1);
+          expect(body.article.body).toBe("I find this existence challenging");
+          expect(body.article.topic).toBe("mitch");
+          expect(body.article.created_at).toBe("2020-07-09T20:11:00.000Z");
+          expect(body.article.votes).toBe(100);
+          expect(body.article.article_img_url).toBe(
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          );
         });
     });
     test("400 - GET /api/articles/:article_id should return not found if invalid id", () => {

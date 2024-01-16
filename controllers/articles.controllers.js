@@ -8,7 +8,7 @@ exports.getArticleById = (req, res, next) => {
 
   fetchArticleById(artId)
     .then((article) => {
-      res.status(200).send(article);
+      res.status(200).send({ article });
     })
     .catch((err) => {
       next(err);
@@ -18,12 +18,9 @@ exports.getArticleById = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   fetchAllArticles()
     .then((articles) => {
-      console.log(articles, "<<<here in controller");
       res.status(200).send(articles);
     })
     .catch((err) => {
-      console.log(err);
-
       next(err);
     });
 };
