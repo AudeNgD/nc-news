@@ -2,8 +2,8 @@ const {
   fetchArticleById,
   fetchAllArticles,
   addCommentByArticleId,
+  updateVoteByArticleId,
 } = require("../models/articles.models");
-const { checkAuthorExists } = require("../utils/check-exists");
 
 exports.getArticleById = (req, res, next) => {
   const artId = req.params.id;
@@ -36,6 +36,20 @@ exports.postCommentByArticleId = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchVoteByArticleId = (req, res, next) => {
+  const incrVote = req.body.inc_votes;
+  const articleId = req.params.article_id;
+  updateVoteByArticleId(articleId, incrVote)
+    .then((updatedArticle) => {
+      console.log(updatedArticle, "<<here controller");
+      res.status(200).send({ updatedArticle });
+    })
+    .catch((err) => {
+      console.log(err);
       next(err);
     });
 };

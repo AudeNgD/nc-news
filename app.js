@@ -6,6 +6,7 @@ const {
   getArticleById,
   getArticles,
   postCommentByArticleId,
+  patchVoteByArticleId,
 } = require("./controllers/articles.controllers");
 app.use(express.json());
 //CORE method
@@ -18,6 +19,7 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:id", getArticleById);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+app.patch("/api/articles/:article_id", patchVoteByArticleId);
 
 //invalid syntax in SQL query
 app.use((err, req, res, next) => {

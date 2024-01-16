@@ -44,3 +44,18 @@ exports.addCommentByArticleId = (articleId, { body, author }) => {
     });
   });
 };
+
+exports.updateVoteByArticleId = (articleId, incrVote) => {
+  //do the check -> article id exists in db
+  return Promise.all([checkArticleExists(articleId)]).then(() => {
+    let queryString = `UPDATE articles
+    SET votes=votes+$1
+    WHERE article_id=$2
+    RETURNING *`;
+
+    let queryParams = [incrVote, articleId];
+    return db.query(queryString, queryParams).then(({ rows }) => {
+      return rows[0];
+    });
+  });
+};
