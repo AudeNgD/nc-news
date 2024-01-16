@@ -212,4 +212,9 @@ describe("app", () => {
       );
     });
   });
+  // describe("/api/comments/:comment_id", () => {
+  //   test("DELETE /api/comments/1 deletes the specified comment and sends no body back", () => {
+  //     return request(app).delete("/api/comments/1").expect(204);
+  //   });
+  // });
 });
