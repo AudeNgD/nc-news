@@ -58,7 +58,6 @@ describe("app", () => {
         .get("/api/articles/1")
         .expect(200)
         .then(({ body }) => {
-          console.log(body.article);
           expect(Object.keys(body.article).length).toEqual(8);
           expect(body.article.author).toBe("butter_bridge");
           expect(body.article.title).toBe(
@@ -91,7 +90,47 @@ describe("app", () => {
         });
     });
   });
-
+  describe("/api/articles/:article_id/comments", () => {
+    test("POST /api/articles/1/comments", () => {
+      const newComment = {
+        body: "test comment",
+        author: "icellusedkars",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual("test comment");
+        });
+    });
+    test("400 - author is not a user", () => {
+      const newComment = {
+        body: "test comment",
+        author: "test author",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("unknown user");
+        });
+    });
+    test("404 - article id does not exist in articles db", () => {
+      const newComment = {
+        body: "test comment 2",
+        author: "icellusedkars",
+      };
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("article not found");
+        });
+    });
+  });
   describe("/api", () => {
     test("Incorrect url sends back 404 path not found", () => {
       return request(app)

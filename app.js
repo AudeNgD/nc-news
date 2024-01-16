@@ -5,6 +5,7 @@ const { getEndPoints } = require("./controllers/core.controllers");
 const {
   getArticleById,
   getArticles,
+  postCommentByArticleId,
 } = require("./controllers/articles.controllers");
 app.use(express.json());
 //CORE method
@@ -16,6 +17,7 @@ app.get("/api/topics", getTopics);
 //ARTICLES methods
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:id", getArticleById);
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 //invalid syntax in SQL query
 app.use((err, req, res, next) => {

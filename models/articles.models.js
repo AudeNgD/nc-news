@@ -1,5 +1,9 @@
 const format = require("pg-format");
 const db = require("../db/connection");
+const {
+  checkAuthorExists,
+  checkArticleExists,
+} = require("../utils/check-exists");
 
 exports.fetchArticleById = (artId) => {
   let queryString = `SELECT * FROM articles WHERE article_id = $1`;
@@ -21,7 +25,22 @@ exports.fetchAllArticles = () => {
   ORDER BY articles.created_at DESC
   `;
   return db.query(queryString).then(({ rows }) => {
-    console.log(rows, "<<here in model");
     return rows;
+  });
+};
+
+exports.addCommentByArticleId = (articleId, { body, author }) => {
+  //do the checks -> author is user, article id exists in db
+  return Promise.all([
+    checkAuthorExists(author),
+    checkArticleExists(articleId),
+  ]).then(() => {
+    let queryString = `INSERT INTO comments (body, author, article_id) 
+    VALUES ($1, $2, $3) 
+    RETURNING *;`;
+    let queryParams = [body, author, articleId];
+    return db.query(queryString, queryParams).then(({ rows }) => {
+      return rows[0].body;
+    });
   });
 };
