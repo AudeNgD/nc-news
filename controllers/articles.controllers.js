@@ -4,6 +4,7 @@ const {
   addCommentByArticleId,
   updateVoteByArticleId,
 } = require("../models/articles.models");
+const { checkValidCommentReq } = require("../utils/check-valid");
 
 exports.getArticleById = (req, res, next) => {
   const artId = req.params.id;
@@ -31,9 +32,12 @@ exports.postCommentByArticleId = (req, res, next) => {
   const newComment = req.body;
   const articleId = req.params.article_id;
 
-  addCommentByArticleId(articleId, newComment)
+  return Promise.all([
+    checkValidCommentReq(newComment),
+    addCommentByArticleId(articleId, newComment),
+  ])
     .then((comment) => {
-      res.status(201).send({ comment });
+      res.status(201).send({ comment: comment[1] });
     })
     .catch((err) => {
       next(err);

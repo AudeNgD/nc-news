@@ -4,6 +4,7 @@ const {
   checkAuthorExists,
   checkArticleExists,
 } = require("../utils/check-exists");
+const { checkValidReq } = require("../utils/check-valid");
 
 exports.fetchArticleById = (artId) => {
   let queryString = `SELECT * FROM articles WHERE article_id = $1`;

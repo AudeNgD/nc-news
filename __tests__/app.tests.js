@@ -164,7 +164,7 @@ describe("app", () => {
           expect(body.comment).toEqual("test comment");
         });
     });
-    test("400 - author is not a user", () => {
+    test("POST: 404 - author is not a user", () => {
       const newComment = {
         body: "test comment",
         author: "test author",
@@ -172,12 +172,12 @@ describe("app", () => {
       return request(app)
         .post("/api/articles/1/comments")
         .send(newComment)
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toEqual("unknown user");
+          expect(body.msg).toEqual("user not found");
         });
     });
-    test("404 - article id does not exist in articles db", () => {
+    test("POST: 404 - article id does not exist in articles db", () => {
       const newComment = {
         body: "test comment 2",
         author: "icellusedkars",
@@ -188,6 +188,45 @@ describe("app", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("article not found");
+        });
+    });
+    test("POST: 400 - invalid request - missing author", () => {
+      const newComment = {
+        body: "test comment 3",
+      };
+
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Invalid request");
+        });
+    });
+    test("POST: 400 - invalid request - missing body", () => {
+      const newComment = {
+        author: "icellusedkars",
+      };
+
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Invalid request");
+        });
+    });
+    test("POST: 404 - article id is invalid", () => {
+      const newComment = {
+        body: "test comment",
+        author: "icellusedkars",
+      };
+      return request(app)
+        .post("/api/articles/nonsense/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request");
         });
     });
   });
