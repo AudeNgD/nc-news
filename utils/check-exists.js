@@ -11,7 +11,7 @@ exports.checkAuthorExists = (author) => {
       }
     });
 };
-//used for POST comment by Article id
+//used for POST comment by Article id and PATCH vote by article id
 //if article id is not in articles db - reject
 exports.checkArticleExists = (articleId) => {
   return db
@@ -19,6 +19,17 @@ exports.checkArticleExists = (articleId) => {
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article not found" });
+      }
+    });
+};
+
+//used for DELETE comment by comment_id
+exports.checkCommentExists = (commentId) => {
+  return db
+    .query("SELECT ALL FROM comments WHERE comment_id=$1", [commentId])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "comment not found" });
       }
     });
 };
