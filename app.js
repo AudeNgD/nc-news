@@ -8,7 +8,9 @@ const {
   postCommentByArticleId,
   patchVoteByArticleId,
 } = require("./controllers/articles.controllers");
+const { deleteCommentById } = require("./controllers/comments.controllers");
 app.use(express.json());
+
 //CORE method
 app.get("/api", getEndPoints);
 
@@ -20,6 +22,9 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:id", getArticleById);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.patch("/api/articles/:article_id", patchVoteByArticleId);
+
+//COMMENTS methods
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 //invalid syntax in SQL query
 app.use((err, req, res, next) => {
