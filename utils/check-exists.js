@@ -7,7 +7,7 @@ exports.checkAuthorExists = (author) => {
     .query("SELECT * FROM users WHERE username = $1", [author])
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 400, msg: "unknown user" });
+        return Promise.reject({ status: 404, msg: "user not found" });
       }
     });
 };
