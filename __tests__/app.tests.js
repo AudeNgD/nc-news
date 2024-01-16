@@ -89,6 +89,66 @@ describe("app", () => {
           expect(body.msg).toBe("URL not found");
         });
     });
+    test("PATCH /api/articles/1 should return article with updated vote value - increment case", () => {
+      const votePatch = { inc_votes: 7 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(votePatch)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.updatedArticle).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              body: "I find this existence challenging",
+              topic: "mitch",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 107,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+          );
+        });
+    });
+    test("PATCH /api/articles/1 should return article with updated vote value - decrement case", () => {
+      const votePatch = { inc_votes: -30 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(votePatch)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.updatedArticle).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              body: "I find this existence challenging",
+              topic: "mitch",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 70,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+          );
+        });
+    });
+    test("404 - PATCH /api/articles/9999 should return not found if valid id put not in table", () => {
+      const votePatch = { inc_votes: -30 };
+      return request(app)
+        .patch("/api/articles/9999")
+        .send(votePatch)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("article not found");
+        });
+    });
+    test("400 - PATCH /api/articles/nonsense should return not found if invalid id", () => {
+      const votePatch = { inc_votes: -30 };
+      return request(app)
+        .patch("/api/articles/nonsense")
+        .send(votePatch)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request");
+        });
+    });
   });
   describe("/api/articles/:article_id/comments", () => {
     test("POST /api/articles/1/comments", () => {
