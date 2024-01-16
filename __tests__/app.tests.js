@@ -43,6 +43,14 @@ describe("app", () => {
           });
         });
     });
+    test("by default the articles are sorted by date in ascending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSorted({ key: "created_at", descending: true });
+        });
+    });
   });
   describe("/api/articles/:article_id", () => {
     test("GET /api/articles/:article_id should return the relevant article and status 200", () => {
