@@ -73,7 +73,7 @@ describe("app", () => {
           );
         });
     });
-    test("400 - GET /api/articles/:article_id should return not found if invalid id", () => {
+    test("GET: 400 - /api/articles/:article_id should return not found if invalid id", () => {
       return request(app)
         .get("/api/articles/nonsense")
         .expect(400)
@@ -81,7 +81,7 @@ describe("app", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-    test("404 - GET /api/articles/:article_id should return not found if valid id but not in table", () => {
+    test("GET: 404 - /api/articles/:article_id should return not found if valid id but not in table", () => {
       return request(app)
         .get("/api/articles/9999")
         .expect(404)
@@ -129,7 +129,7 @@ describe("app", () => {
           );
         });
     });
-    test("404 - PATCH /api/articles/9999 should return not found if valid id put not in table", () => {
+    test("PATCH: 404 - /api/articles/9999 should return not found if valid id put not in table", () => {
       const votePatch = { inc_votes: -30 };
       return request(app)
         .patch("/api/articles/9999")
@@ -139,7 +139,7 @@ describe("app", () => {
           expect(body.msg).toEqual("article not found");
         });
     });
-    test("400 - PATCH /api/articles/nonsense should return not found if invalid id", () => {
+    test("PATCH: 400 - /api/articles/nonsense should return not found if invalid id", () => {
       const votePatch = { inc_votes: -30 };
       return request(app)
         .patch("/api/articles/nonsense")
@@ -251,32 +251,59 @@ describe("app", () => {
       );
     });
   });
-});
-describe("/api/comments/:comment_id", () => {
-  test("DELETE /api/comments/1 deletes the specified comment and sends no body back", () => {
-    return request(app)
-      .delete("/api/comments/1")
-      .expect(204)
-      .then(({ body }) => {
-        expect(body).toEqual({});
-      });
-  });
+  describe("/api/comments/:comment_id", () => {
+    test("DELETE /api/comments/1 deletes the specified comment and sends no body back", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
 
-  test("DELETE: 404 responds with appropriate status and error message when given a valid id but not in db", () => {
-    return request(app)
-      .delete("/api/comments/9999")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toEqual("comment not found");
-      });
-  });
+    test("DELETE: 404 responds with appropriate status and error message when given a valid id but not in db", () => {
+      return request(app)
+        .delete("/api/comments/9999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("comment not found");
+        });
+    });
 
-  test("DELETE: 400 responds with appropriate status and error message when given an invalid id", () => {
-    return request(app)
-      .delete("/api/comments/nonsense")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request");
-      });
+    test("DELETE: 400 responds with appropriate status and error message when given an invalid id", () => {
+      return request(app)
+        .delete("/api/comments/nonsense")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request");
+        });
+    });
+  });
+  describe("/api/users", () => {
+    test("GET /api/users should return an array of all users topics and status 200", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).toEqual(4);
+          body.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("GET: 404 - incorrect url sends back 404 and url not found", () => {
+      return request(app)
+        .get("/api/use")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("URL not found");
+        });
+    });
   });
 });
