@@ -45,11 +45,9 @@ exports.patchVoteByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
   updateVoteByArticleId(articleId, incrVote)
     .then((updatedArticle) => {
-      console.log(updatedArticle, "<<here controller");
       res.status(200).send({ updatedArticle });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
