@@ -17,15 +17,23 @@ exports.fetchArticleById = (artId) => {
   });
 };
 
-exports.fetchAllArticles = () => {
+exports.fetchAllArticles = (topic) => {
   let queryString = `
   SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id) AS comment_count 
   FROM articles
   LEFT JOIN comments ON comments.article_id=articles.article_id
-  GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC
   `;
-  return db.query(queryString).then(({ rows }) => {
+  let queryParams = [];
+
+  if (topic) {
+    queryString += `WHERE topic=$1`;
+    queryParams.push(topic);
+  }
+
+  queryString += `GROUP BY articles.article_id
+  ORDER BY articles.created_at DESC`;
+
+  return db.query(queryString, queryParams).then(({ rows }) => {
     return rows;
   });
 };

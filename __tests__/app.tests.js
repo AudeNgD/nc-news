@@ -230,6 +230,46 @@ describe("app", () => {
         });
     });
   });
+  describe("/api/articles?topic=...", () => {
+    test("GET /api/articles?topic=... should return all articles associated with that topic and status 200", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).toEqual(1);
+          body.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                comment_count: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("GET /api/articles?topic=... should return an empty array when query existing topic that has no related articles", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual([]);
+        });
+    });
+    test("GET: 404 non-existent topic query send back 404 and topic not found", () => {
+      return request(app)
+        .get("/api/articles?topic=dogs")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("topic not found");
+        });
+    });
+  });
   describe("/api", () => {
     test("Incorrect url sends back 404 path not found", () => {
       return request(app)
