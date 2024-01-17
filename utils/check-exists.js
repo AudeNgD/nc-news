@@ -26,10 +26,21 @@ exports.checkArticleExists = (articleId) => {
 //used for DELETE comment by comment_id
 exports.checkCommentExists = (commentId) => {
   return db
-    .query("SELECT ALL FROM comments WHERE comment_id=$1", [commentId])
+    .query("SELECT * FROM comments WHERE comment_id=$1", [commentId])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "comment not found" });
+      }
+    });
+};
+
+//used for GET article(s) by topic
+exports.checkTopicExists = (topic) => {
+  return db
+    .query("SELECT * FROM topics WHERE slug=$1", [topic])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "topic not found" });
       }
     });
 };

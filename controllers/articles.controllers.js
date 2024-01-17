@@ -4,6 +4,7 @@ const {
   addCommentByArticleId,
   updateVoteByArticleId,
 } = require("../models/articles.models");
+const { checkTopicExists } = require("../utils/check-exists");
 const { checkValidCommentReq } = require("../utils/check-valid");
 
 exports.getArticleById = (req, res, next) => {
@@ -19,8 +20,16 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchAllArticles()
-    .then((articles) => {
+  const topic = req.query.topic;
+
+  const queries = [fetchAllArticles(topic)];
+
+  if (topic) {
+    queries.push(checkTopicExists(topic));
+  }
+  return Promise.all(queries)
+    .then((response) => {
+      const articles = response[0];
       res.status(200).send(articles);
     })
     .catch((err) => {
