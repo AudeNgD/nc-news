@@ -7,12 +7,18 @@ const {
 const { checkValidReq } = require("../utils/check-valid");
 
 exports.fetchArticleById = (artId) => {
-  let queryString = `SELECT * FROM articles WHERE article_id = $1`;
+  let queryString = `SELECT articles.*, COUNT(comment_id) AS comment_count
+  FROM articles
+  LEFT JOIN comments on comments.article_id=articles.article_id
+  WHERE articles.article_id = $1
+  GROUP BY articles.article_id`;
+
   return db.query(queryString, [artId]).then(({ rows }) => {
     //if valid id but not in table
     if (rows.length === 0) {
       return Promise.reject();
     }
+
     return rows[0];
   });
 };
