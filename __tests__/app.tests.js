@@ -43,7 +43,7 @@ describe("app", () => {
           });
         });
     });
-    test("by default the articles are sorted by date in ascending order", () => {
+    test("by default the articles are sorted by date in descending order", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -350,6 +350,46 @@ describe("/api/users", () => {
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("URL not found");
+      });
+  });
+});
+describe("/api/articles?sort_by=...", () => {
+  test("GET /api/articles?sort_by=... are sorted by sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "article_id",
+          descending: true,
+        });
+      });
+  });
+  test("GET /api/articles?sort_by=...&order=... are sorted by order query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "article_id",
+          ascending: true,
+        });
+      });
+  });
+  test("GET: 400 should return bad request if invalid sort_by provided", () => {
+    return request(app)
+      .get("/api/articles?sort_by=nonsense")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid query");
+      });
+  });
+  test("GET: 400 should return bad request if invalid order provided", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=nonsense")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid query");
       });
   });
 });
