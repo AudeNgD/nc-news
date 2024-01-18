@@ -38,7 +38,7 @@ exports.fetchAllArticles = (topic) => {
 
   queryString += `GROUP BY articles.article_id
   ORDER BY articles.created_at DESC`;
-
+  //currently refactoring here
   return db.query(queryString, queryParams).then(({ rows }) => {
     return rows;
   });
