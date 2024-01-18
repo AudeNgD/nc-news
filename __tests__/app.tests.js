@@ -325,6 +325,55 @@ describe("/api/comments/:comment_id", () => {
         expect(body.msg).toEqual("Bad request");
       });
   });
+  test("PATCH /api/comments/:comment_id should update vote property and respond with update comment and status 200", () => {
+    const votePatch = { inc_votes: -30 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(votePatch)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedComment).toEqual(
+          expect.objectContaining({
+            comment_id: 1,
+            article_id: 9,
+            author: "butter_bridge",
+            created_at: "2020-04-06T12:17:00.000Z",
+            votes: -14,
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          })
+        );
+      });
+  });
+  test("PATCH: 400 invalid request - no inc_vote key", () => {
+    const votePatch = { nonsense: -30 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(votePatch)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid request");
+      });
+  });
+  test("PATCH: 404 valid comment id but not in db", () => {
+    const votePatch = { inc_votes: -30 };
+    return request(app)
+      .patch("/api/comments/9999")
+      .send(votePatch)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("comment not found");
+      });
+  });
+  test("PATCH: 400 invalid comment id", () => {
+    const votePatch = { inc_votes: -30 };
+    return request(app)
+      .patch("/api/comments/nonsense")
+      .send(votePatch)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
 });
 describe("/api/users", () => {
   test("GET /api/users should return an array of all users topics and status 200", () => {
