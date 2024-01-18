@@ -30,7 +30,7 @@ exports.getArticles = (req, res, next) => {
   return Promise.all(queries)
     .then((response) => {
       const articles = response[0];
-      res.status(200).send(articles);
+      res.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);

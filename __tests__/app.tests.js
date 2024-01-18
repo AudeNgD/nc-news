@@ -30,8 +30,8 @@ describe("app", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.length).toEqual(13);
-          body.forEach((article) => {
+          expect(body.articles.length).toEqual(13);
+          body.articles.forEach((article) => {
             expect(typeof article.author).toBe("string");
             expect(typeof article.title).toBe("string");
             expect(typeof article.article_id).toBe("number");
@@ -48,7 +48,10 @@ describe("app", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body).toBeSorted({ key: "created_at", descending: true });
+          expect(body.articles).toBeSorted({
+            key: "created_at",
+            descending: true,
+          });
         });
     });
   });
@@ -239,8 +242,9 @@ describe("/api/articles?topic=...", () => {
       .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toEqual(1);
-        body.forEach((article) => {
+        expect(body.articles.length).toEqual(1);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
           expect(article).toEqual(
             expect.objectContaining({
               article_id: expect.any(Number),
@@ -261,7 +265,7 @@ describe("/api/articles?topic=...", () => {
       .get("/api/articles?topic=paper")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toEqual([]);
+        expect(body.articles).toEqual([]);
       });
   });
   test("GET: 404 non-existent topic query send back 404 and topic not found", () => {
