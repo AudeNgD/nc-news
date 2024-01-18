@@ -1,35 +1,10 @@
+const apiRouter = require("./routes/api-router");
+
 const express = require("express");
 const app = express();
-const { getTopics } = require("./controllers/topics.controllers");
-const { getEndPoints } = require("./controllers/core.controllers");
-const {
-  getArticleById,
-  getArticles,
-  postCommentByArticleId,
-  patchVoteByArticleId,
-} = require("./controllers/articles.controllers");
-const { deleteCommentById } = require("./controllers/comments.controllers");
-const { getAllUsers } = require("./controllers/users.controllers");
 
 app.use(express.json());
-
-//CORE method
-app.get("/api", getEndPoints);
-
-//TOPICS methods
-app.get("/api/topics", getTopics);
-
-//ARTICLES methods
-app.get("/api/articles", getArticles);
-app.get("/api/articles/:id", getArticleById);
-app.post("/api/articles/:article_id/comments", postCommentByArticleId);
-app.patch("/api/articles/:article_id", patchVoteByArticleId);
-
-//COMMENTS methods
-app.delete("/api/comments/:comment_id", deleteCommentById);
-
-//USERS methods
-app.get("/api/users", getAllUsers);
+app.use("/api", apiRouter);
 
 //invalid syntax in SQL query
 app.use((err, req, res, next) => {
