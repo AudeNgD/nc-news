@@ -22,7 +22,6 @@ exports.fetchArticleById = (artId) => {
   });
 };
 
-//WORKING HERE NOW
 exports.fetchAllArticles = (
   topic,
   sort_by = "articles.created_at",
