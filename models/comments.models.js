@@ -1,4 +1,3 @@
-const format = require("pg-format");
 const db = require("../db/connection");
 const { checkCommentExists } = require("../utils/check-exists");
 
