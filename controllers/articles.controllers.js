@@ -9,7 +9,6 @@ const { checkValidCommentReq } = require("../utils/check-valid");
 
 exports.getArticleById = (req, res, next) => {
   const artId = req.params.id;
-
   fetchArticleById(artId)
     .then((article) => {
       res.status(200).send({ article });
@@ -19,7 +18,6 @@ exports.getArticleById = (req, res, next) => {
     });
 };
 
-//WORKING HERE NOW
 exports.getArticles = (req, res, next) => {
   const { topic, sort_by, order } = req.query;
   const queries = [fetchAllArticles(topic, sort_by, order)];
