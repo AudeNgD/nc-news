@@ -22,7 +22,29 @@ exports.fetchArticleById = (artId) => {
   });
 };
 
-exports.fetchAllArticles = (topic) => {
+//WORKING HERE NOW
+exports.fetchAllArticles = (
+  topic,
+  sort_by = "articles.created_at",
+  order = "DESC"
+) => {
+  const validSortBy = [
+    "articles.created_at",
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "votes",
+    "article_img_url",
+  ];
+
+  const validOrderBy = ["asc", "desc", "ASC", "DESC"];
+
+  if (!validSortBy.includes(sort_by) || !validOrderBy.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid query" });
+  }
+
   let queryString = `
   SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id) AS comment_count 
   FROM articles
@@ -36,8 +58,8 @@ exports.fetchAllArticles = (topic) => {
   }
 
   queryString += `GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC`;
-  //currently refactoring here
+  ORDER BY ${sort_by} ${order}`;
+
   return db.query(queryString, queryParams).then(({ rows }) => {
     return rows;
   });

@@ -19,10 +19,10 @@ exports.getArticleById = (req, res, next) => {
     });
 };
 
+//WORKING HERE NOW
 exports.getArticles = (req, res, next) => {
-  const topic = req.query.topic;
-
-  const queries = [fetchAllArticles(topic)];
+  const { topic, sort_by, order } = req.query;
+  const queries = [fetchAllArticles(topic, sort_by, order)];
 
   if (topic) {
     queries.push(checkTopicExists(topic));
