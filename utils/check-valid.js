@@ -5,3 +5,11 @@ exports.checkValidCommentReq = ({ body, author }) => {
     return Promise.reject({ status: 400, msg: "Invalid request" });
   }
 };
+
+//check validity of request for PATCH comment vote by comment id
+
+exports.checkValidVoteReq = ({ inc_votes }) => {
+  if (inc_votes === undefined) {
+    return Promise.reject({ status: 400, msg: "Invalid request" });
+  }
+};

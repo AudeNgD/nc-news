@@ -24,6 +24,7 @@ exports.checkArticleExists = (articleId) => {
 };
 
 //used for DELETE comment by comment_id
+//used for PATCH comment votes by comment_id
 exports.checkCommentExists = (commentId) => {
   return db
     .query("SELECT * FROM comments WHERE comment_id=$1", [commentId])
