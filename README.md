@@ -35,4 +35,4 @@ npm test app
 -> You'll need postgres > 3.4.3 and Node.js > 21.3.0
 
 LINK TO HOSTED VERSION
-xxxxxxx
+https://nc-news-uld9.onrender.com/
