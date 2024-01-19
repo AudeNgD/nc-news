@@ -5,6 +5,7 @@ const {
   checkTopicExists,
 } = require("../utils/check-exists");
 const { checkValidReq, checkValidNewArticle } = require("../utils/check-valid");
+const { getRowsCount } = require("../utils/count-table-rows");
 
 exports.fetchArticleById = (artId) => {
   let queryString = `SELECT articles.*, COUNT(comment_id) AS comment_count
@@ -26,7 +27,9 @@ exports.fetchArticleById = (artId) => {
 exports.fetchAllArticles = (
   topic,
   sort_by = "articles.created_at",
-  order = "DESC"
+  order = "DESC",
+  limit = "10",
+  p = "1"
 ) => {
   const validSortBy = [
     "articles.created_at",
@@ -45,22 +48,36 @@ exports.fetchAllArticles = (
     return Promise.reject({ status: 400, msg: "Invalid query" });
   }
 
-  let queryString = `
-  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id) AS comment_count 
+  //check valid limit and valid page number
+  if (isNaN(limit) !== false || isNaN(p) !== false) {
+    return Promise.reject({ status: 400, msg: "Bad query" });
+  }
+
+  let selectQueryString = `
+  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id) AS comment_count, COUNT(*) OVER() AS total_count 
   FROM articles
   LEFT JOIN comments ON comments.article_id=articles.article_id
   `;
-  let queryParams = [];
+
+  let selectQueryParams = [];
 
   if (topic) {
-    queryString += `WHERE topic=$1`;
-    queryParams.push(topic);
+    selectQueryString += `WHERE topic=$1`;
+    selectQueryParams.push(topic);
   }
-
-  queryString += `GROUP BY articles.article_id
+  selectQueryString += `GROUP BY articles.article_id
   ORDER BY ${sort_by} ${order}`;
 
-  return db.query(queryString, queryParams).then(({ rows }) => {
+  return db.query(selectQueryString, selectQueryParams).then(({ rows }) => {
+    const rowCount = rows.length;
+    const responseSize = Number(limit);
+    const offset = Number(limit) * (Number(p) - 1);
+
+    if (offset > rowCount) {
+      return Promise.reject({ status: 404, msg: "Page not found" });
+    }
+    rows = rows.slice(offset, offset + responseSize);
+
     return rows;
   });
 };
