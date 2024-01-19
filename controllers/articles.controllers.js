@@ -3,9 +3,13 @@ const {
   fetchAllArticles,
   addCommentByArticleId,
   updateVoteByArticleId,
+  addNewArticle,
 } = require("../models/articles.models");
 const { checkTopicExists } = require("../utils/check-exists");
-const { checkValidCommentReq } = require("../utils/check-valid");
+const {
+  checkValidCommentReq,
+  checkValidNewArticle,
+} = require("../utils/check-valid");
 
 exports.getArticleById = (req, res, next) => {
   const artId = req.params.id;
@@ -57,6 +61,20 @@ exports.patchVoteByArticleId = (req, res, next) => {
   updateVoteByArticleId(articleId, incrVote)
     .then((updatedArticle) => {
       res.status(200).send({ updatedArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postNewArticle = (req, res, next) => {
+  const newArticleData = req.body;
+  return Promise.all([
+    checkValidNewArticle(newArticleData),
+    addNewArticle(newArticleData),
+  ])
+    .then((newArticle) => {
+      res.status(201).send({ newArticle: newArticle[1] });
     })
     .catch((err) => {
       next(err);

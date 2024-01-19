@@ -54,6 +54,93 @@ describe("app", () => {
           });
         });
     });
+    test("POST /api/articles add a new article and responds with relevant information and status 201", () => {
+      const newArticleData = {
+        author: "lurker",
+        title: "test title",
+        body: "test body",
+        topic: "cats",
+        article_img_url: "test url",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticleData)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.newArticle.article_id).toEqual(14);
+          expect(body.newArticle.votes).toEqual(0);
+          expect(body.newArticle.comment_count).toEqual("0");
+          expect(body.newArticle.hasOwnProperty("created_at")).toEqual(true);
+        });
+    });
+    test("POST /api/articles add a new article and responds with relevant information and status 201 when no image url is provided", () => {
+      const newArticleData = {
+        author: "lurker",
+        title: "test title",
+        body: "test body",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticleData)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.newArticle.article_id).toEqual(14);
+          expect(body.newArticle.votes).toEqual(0);
+          expect(body.newArticle.comment_count).toEqual("0");
+          expect(body.newArticle.hasOwnProperty("created_at")).toEqual(true);
+          return db
+            .query(`SELECT * FROM articles WHERE article_id=14`)
+            .then(({ rows }) => {
+              expect(rows[0].article_img_url).toEqual(
+                "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+              );
+            });
+        });
+    });
+    test("POST: 404 /api/articles responds with 404 bad request if author isn't a user", () => {
+      const newArticleData = {
+        author: "not a user",
+        title: "test title",
+        body: "test body",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticleData)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("user not found");
+        });
+    });
+    test("POST: 404 /api/articles responds with 404 bad request if topic isn't an existing topic", () => {
+      const newArticleData = {
+        author: "lurker",
+        title: "test title",
+        body: "test body",
+        topic: "dogs",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticleData)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("topic not found");
+        });
+    });
+    test("POST: 400 /api/articles responds with 400 bad request if article data is invalid", () => {
+      const newArticleData = {
+        nonsense: "lurker",
+        title: "test_title",
+        body: "test body",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticleData)
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toEqual("Invalid request"));
+    });
   });
   describe("/api/articles/:article_id", () => {
     test("GET /api/articles/:article_id should return the relevant article and status 200", () => {
