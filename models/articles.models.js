@@ -2,8 +2,9 @@ const db = require("../db/connection");
 const {
   checkAuthorExists,
   checkArticleExists,
+  checkTopicExists,
 } = require("../utils/check-exists");
-const { checkValidReq } = require("../utils/check-valid");
+const { checkValidReq, checkValidNewArticle } = require("../utils/check-valid");
 
 exports.fetchArticleById = (artId) => {
   let queryString = `SELECT articles.*, COUNT(comment_id) AS comment_count
@@ -93,4 +94,39 @@ exports.updateVoteByArticleId = (articleId, incrVote) => {
       return rows[0];
     });
   });
+};
+
+exports.addNewArticle = ({ author, title, body, topic, article_img_url }) => {
+  //do the checks -> author is user and topic is an existing one
+
+  return Promise.all([checkAuthorExists(author), checkTopicExists(topic)]).then(
+    () => {
+      if (article_img_url === undefined) {
+        article_img_url =
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700";
+      }
+
+      let insertString = `INSERT INTO articles
+      (author, title, body, topic, article_img_url)
+      VALUES 
+      ($1, $2, $3, $4, $5)
+     RETURNING *
+     `;
+
+      let queryParams = [author, title, body, topic, article_img_url];
+      return db.query(insertString, queryParams).then(({ rows }) => {
+        const article_id = rows[0].article_id;
+
+        let selectQuery = `SELECT articles.article_id, articles.created_at, articles.votes, COUNT(comment_id) AS comment_count 
+    FROM articles
+    LEFT JOIN comments ON comments.article_id=articles.article_id 
+    WHERE articles.article_id=$1
+    GROUP BY articles.article_id`;
+
+        return db.query(selectQuery, [article_id]).then(({ rows }) => {
+          return rows[0];
+        });
+      });
+    }
+  );
 };
