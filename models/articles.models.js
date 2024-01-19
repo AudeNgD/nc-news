@@ -3,9 +3,9 @@ const {
   checkAuthorExists,
   checkArticleExists,
   checkTopicExists,
+  checkArticleInCommentsTable,
 } = require("../utils/check-exists");
 const { checkValidReq, checkValidNewArticle } = require("../utils/check-valid");
-const { getRowsCount } = require("../utils/count-table-rows");
 
 exports.fetchArticleById = (artId) => {
   let queryString = `SELECT articles.*, COUNT(comment_id) AS comment_count
@@ -146,4 +146,24 @@ exports.addNewArticle = ({ author, title, body, topic, article_img_url }) => {
       });
     }
   );
+};
+
+exports.removeArticleByArticleId = (article_id) => {
+  //if article_id exists in comments table remove the comments
+  return Promise.all([checkArticleInCommentsTable(article_id)]).then((res) => {
+    if (res[0] !== 0) {
+      let deleteCommentsQuery = `DELETE FROM comments WHERE article_id=$1`;
+      let deleteCommentsParams = [article_id];
+      return db.query(deleteCommentsQuery, deleteCommentsParams);
+    }
+    //do the check -> article id exists in db
+    return Promise.all([checkArticleExists(article_id)]).then(() => {
+      let queryString = `DELETE FROM articles
+            WHERE article_id=$1
+            `;
+
+      let queryParams = [article_id];
+      return db.query(queryString, queryParams);
+    });
+  });
 };

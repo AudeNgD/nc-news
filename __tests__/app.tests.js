@@ -301,6 +301,48 @@ describe("app", () => {
         expect(body.msg).toEqual("Bad request");
       });
   });
+  test("DELETE /api/articles/:article_id delete specified article and associated comments and returns 204", () => {
+    return request(app)
+      .delete("/api/articles/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+        return db
+          .query(`SELECT * FROM comments WHERE article_id=1`)
+          .then(({ rows }) => {
+            expect(rows.length).toEqual(0);
+          });
+      });
+  });
+  test("DELETE /api/articles/:article_id delete specified article for article without comment and returns 204", () => {
+    return request(app)
+      .delete("/api/articles/7")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+        return db
+          .query(`SELECT * FROM articles WHERE article_id=7`)
+          .then(({ rows }) => {
+            expect(rows.length).toEqual(0);
+          });
+      });
+  });
+  test("DELETE: 404 /api/articles/:article_id returns 404 for valid article id but not in db", () => {
+    return request(app)
+      .delete("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("article not found");
+      });
+  });
+  test("DELETE: 400 /api/articles/:article_id returns 404 for invalid article id", () => {
+    return request(app)
+      .delete("/api/articles/nonsense")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
 });
 describe("/api/articles/:article_id/comments", () => {
   test("POST /api/articles/1/comments", () => {
