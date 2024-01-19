@@ -30,7 +30,7 @@ describe("app", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length).toEqual(13);
+          //expect(body.articles.length).toEqual(13);
           body.articles.forEach((article) => {
             expect(typeof article.author).toBe("string");
             expect(typeof article.title).toBe("string");
@@ -52,6 +52,24 @@ describe("app", () => {
             key: "created_at",
             descending: true,
           });
+        });
+    });
+    test("GET /api/articles?limit=... should return a list of the three articles objects", () => {
+      return request(app)
+        .get("/api/articles?limit=3")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toEqual(3);
+        });
+    });
+    test("GET /api/articles?p=... should go to page two of results", () => {
+      return request(app)
+        .get("/api/articles?limit=2&p=2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toEqual(2);
+          expect(body.articles[0].article_id).toEqual(2);
+          expect(body.articles[1].article_id).toEqual(13);
         });
     });
     test("POST /api/articles add a new article and responds with relevant information and status 201", () => {

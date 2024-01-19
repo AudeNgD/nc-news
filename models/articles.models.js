@@ -26,7 +26,9 @@ exports.fetchArticleById = (artId) => {
 exports.fetchAllArticles = (
   topic,
   sort_by = "articles.created_at",
-  order = "DESC"
+  order = "DESC",
+  limit = "10",
+  p = "1"
 ) => {
   const validSortBy = [
     "articles.created_at",
@@ -57,8 +59,13 @@ exports.fetchAllArticles = (
     queryParams.push(topic);
   }
 
+  const offset = Number(limit) * (Number(p) - 1);
+  offset.toString();
+
   queryString += `GROUP BY articles.article_id
-  ORDER BY ${sort_by} ${order}`;
+  ORDER BY ${sort_by} ${order}
+  LIMIT ${limit}
+  OFFSET ${offset}`;
 
   return db.query(queryString, queryParams).then(({ rows }) => {
     return rows;

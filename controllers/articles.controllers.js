@@ -23,8 +23,9 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order } = req.query;
-  const queries = [fetchAllArticles(topic, sort_by, order)];
+  const { topic, sort_by, order, limit, p } = req.query;
+  console.log(p);
+  const queries = [fetchAllArticles(topic, sort_by, order, limit, p)];
 
   if (topic) {
     queries.push(checkTopicExists(topic));
@@ -35,6 +36,7 @@ exports.getArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch((err) => {
+      console.log(err);
       next(err);
     });
 };
