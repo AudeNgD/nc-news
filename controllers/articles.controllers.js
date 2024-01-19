@@ -24,7 +24,6 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const { topic, sort_by, order, limit, p } = req.query;
-  console.log(p);
   const queries = [fetchAllArticles(topic, sort_by, order, limit, p)];
 
   if (topic) {
@@ -33,10 +32,20 @@ exports.getArticles = (req, res, next) => {
   return Promise.all(queries)
     .then((response) => {
       const articles = response[0];
-      res.status(200).send({ articles });
+      let total_count = 0;
+
+      //may return empty array as valid response if topic is valid but not in db
+      if (
+        articles[0] !== undefined &&
+        articles[0].hasOwnProperty("total_count")
+      ) {
+        total_count = articles[0].total_count;
+        total_count = Number(total_count);
+        articles.forEach((article) => delete article.total_count);
+      }
+      res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };

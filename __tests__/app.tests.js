@@ -69,7 +69,48 @@ describe("app", () => {
         .then(({ body }) => {
           expect(body.articles.length).toEqual(2);
           expect(body.articles[0].article_id).toEqual(2);
-          expect(body.articles[1].article_id).toEqual(13);
+          expect(body.articles[1].article_id).toEqual(12);
+        });
+    });
+    test("GET: 400 /api/articles?limit=... returns 400 bad request if limit isn't not number", () => {
+      return request(app)
+        .get("/api/articles?limit=a&p=2")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad query");
+        });
+    });
+    test("GET: 400 /api/articles?p=... returns 400 bad request if page number isn't not number", () => {
+      return request(app)
+        .get("/api/articles?limit=2&p=a")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad query");
+        });
+    });
+    test("GET: 400 /api/articles?limit=... returns 400 bad request if limit <1", () => {
+      return request(app)
+        .get("/api/articles?limit=0&p=a")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad query");
+        });
+    });
+    test("GET: 404 /api/articles?p=... returns 404 page not found if page number superior to number of pages", () => {
+      return request(app)
+        .get("/api/articles?limit=3&p=100")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Page not found");
+        });
+    });
+    test("GET /api/articles?p=... should return the total number of articles found regardless of limit", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch&limit=2&p=2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toEqual(2);
+          expect(body.total_count).toEqual(12);
         });
     });
     test("POST /api/articles add a new article and responds with relevant information and status 201", () => {
