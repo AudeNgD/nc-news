@@ -4,6 +4,7 @@ const {
   addCommentByArticleId,
   updateVoteByArticleId,
   addNewArticle,
+  removeArticleByArticleId,
 } = require("../models/articles.models");
 const { checkTopicExists } = require("../utils/check-exists");
 const {
@@ -86,6 +87,18 @@ exports.postNewArticle = (req, res, next) => {
   ])
     .then((newArticle) => {
       res.status(201).send({ newArticle: newArticle[1] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticleByArticleId = (req, res, next) => {
+  const article_id = req.params.article_id;
+
+  removeArticleByArticleId(article_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);
