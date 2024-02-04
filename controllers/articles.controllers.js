@@ -32,18 +32,18 @@ exports.getArticles = (req, res, next) => {
   }
   return Promise.all(queries)
     .then((response) => {
-      const articles = response[0];
-      let total_count = 0;
+      const articles = response[0][0];
+      let total_count = response[0][1];
 
       //may return empty array as valid response if topic is valid but not in db
-      if (
-        articles[0] !== undefined &&
-        articles[0].hasOwnProperty("total_count")
-      ) {
-        total_count = articles[0].total_count;
-        total_count = Number(total_count);
-        articles.forEach((article) => delete article.total_count);
-      }
+      // if (
+      //   articles[0] !== undefined &&
+      //   articles[0].hasOwnProperty("total_count")
+      // ) {
+      //   total_count = articles[0].total_count;
+      //   total_count = Number(total_count);
+      //   articles.forEach((article) => delete article.total_count);
+      // }
       res.status(200).send({ articles, total_count });
     })
     .catch((err) => {

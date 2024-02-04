@@ -23,6 +23,35 @@ describe("app", () => {
           });
         });
     });
+    test("POST /api/topics should return status 201 and object with slug and description", () => {
+      const newTopic = {
+        slug: "test name",
+        description: "test description",
+      };
+      return request(app)
+        .post("/api/topics")
+        .send(newTopic)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.new_topic).toEqual({
+            slug: "test name",
+            description: "test description",
+          });
+        });
+    });
+    test("POST: 400 /api/topics returns 400 bad request for invalid query - incorrect key or values not strings", () => {
+      const newTopic = {
+        slug: "",
+        description: "test description",
+      };
+      return request(app)
+        .post("/api/topics")
+        .send(newTopic)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Invalid request");
+        });
+    });
   });
   describe("/api/articles", () => {
     test("GET /api/articles should return an array of article objects with correct properties", () => {
