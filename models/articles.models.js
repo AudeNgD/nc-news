@@ -54,7 +54,7 @@ exports.fetchAllArticles = (
   }
 
   let selectQueryString = `
-  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id) AS comment_count, COUNT(*) OVER() AS total_count 
+  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id) AS comment_count
   FROM articles
   LEFT JOIN comments ON comments.article_id=articles.article_id
   `;
@@ -78,7 +78,7 @@ exports.fetchAllArticles = (
     }
     rows = rows.slice(offset, offset + responseSize);
 
-    return rows;
+    return [rows, rowCount];
   });
 };
 

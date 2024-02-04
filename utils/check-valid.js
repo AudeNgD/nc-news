@@ -29,3 +29,17 @@ exports.checkValidNewArticle = ({ author, title, body, topic }) => {
     return Promise.reject({ status: 400, msg: "Invalid request" });
   }
 };
+
+//check validity of request for POST topic
+exports.checkValidNewTopic = ({ slug, description }) => {
+  if (
+    slug === undefined ||
+    description === undefined ||
+    slug === "" ||
+    description === "" ||
+    typeof slug !== "string" ||
+    typeof description !== "string"
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid request" });
+  }
+};
