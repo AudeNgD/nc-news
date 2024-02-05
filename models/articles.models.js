@@ -82,6 +82,15 @@ exports.fetchAllArticles = (
   });
 };
 
+exports.fetchCommentsByArticleId = (articleId) => {
+  let queryString = `SELECT * FROM comments
+  WHERE article_id=$1`;
+
+  return db.query(queryString, [articleId]).then(({ rows }) => {
+    return rows;
+  });
+};
+
 exports.addCommentByArticleId = (articleId, { body, author }) => {
   //do the checks -> author is user, article id exists in db
   return Promise.all([
