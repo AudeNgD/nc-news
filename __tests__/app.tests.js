@@ -374,6 +374,20 @@ describe("app", () => {
   });
 });
 describe("/api/articles/:article_id/comments", () => {
+  test("GET /api/articles/1/comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.comments.forEach((comment) => {
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+        });
+      });
+  });
+
   test("POST /api/articles/1/comments", () => {
     const newComment = {
       body: "test comment",

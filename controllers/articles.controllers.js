@@ -56,8 +56,8 @@ exports.getArticles = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
   fetchCommentsByArticleId(articleId)
-    .then((articles) => {
-      res.status(200).send({ articles });
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
