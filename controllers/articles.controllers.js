@@ -1,3 +1,4 @@
+const { response } = require("../app");
 const {
   fetchArticleById,
   fetchAllArticles,
@@ -5,6 +6,7 @@ const {
   updateVoteByArticleId,
   addNewArticle,
   removeArticleByArticleId,
+  fetchCommentsByArticleId,
 } = require("../models/articles.models");
 const { checkTopicExists } = require("../utils/check-exists");
 const {
@@ -45,6 +47,17 @@ exports.getArticles = (req, res, next) => {
       //   articles.forEach((article) => delete article.total_count);
       // }
       res.status(200).send({ articles, total_count });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const articleId = req.params.article_id;
+  fetchCommentsByArticleId(articleId)
+    .then((articles) => {
+      res.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);
