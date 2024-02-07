@@ -668,11 +668,11 @@ describe("/api/articles?sort_by=...", () => {
   });
   test("GET /api/articles?sort_by=...&order=... are sorted by order query", () => {
     return request(app)
-      .get("/api/articles?sort_by=article_id&order=asc")
+      .get("/api/articles?sort_by=comment_count&order=asc")
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeSorted({
-          key: "article_id",
+          key: "comment_count",
           ascending: true,
         });
       });

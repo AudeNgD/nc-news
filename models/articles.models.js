@@ -40,6 +40,7 @@ exports.fetchAllArticles = (
     "body",
     "votes",
     "article_img_url",
+    "comment_count",
   ];
 
   const validOrderBy = ["asc", "desc", "ASC", "DESC"];
