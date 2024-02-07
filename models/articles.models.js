@@ -26,13 +26,13 @@ exports.fetchArticleById = (artId) => {
 
 exports.fetchAllArticles = (
   topic,
-  sort_by = "articles.created_at",
+  sort_by = "created_at",
   order = "DESC",
   limit = "10",
   p = "1"
 ) => {
   const validSortBy = [
-    "articles.created_at",
+    "created_at",
     "article_id",
     "title",
     "topic",
