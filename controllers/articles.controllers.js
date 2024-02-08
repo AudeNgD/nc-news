@@ -8,7 +8,10 @@ const {
   removeArticleByArticleId,
   fetchCommentsByArticleId,
 } = require("../models/articles.models");
-const { checkTopicExists } = require("../utils/check-exists");
+const {
+  checkTopicExists,
+  checkArticleInCommentsTable,
+} = require("../utils/check-exists");
 const {
   checkValidCommentReq,
   checkValidNewArticle,
@@ -55,13 +58,19 @@ exports.getArticles = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
-  fetchCommentsByArticleId(articleId)
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  return (
+    Promise.all([
+      checkArticleInCommentsTable(articleId),
+      fetchCommentsByArticleId(articleId),
+    ])
+      // fetchCommentsByArticleId(articleId)
+      .then((comments) => {
+        res.status(200).send({ comments: comments[1] });
+      })
+      .catch((err) => {
+        next(err);
+      })
+  );
 };
 
 exports.postCommentByArticleId = (req, res, next) => {
