@@ -387,6 +387,14 @@ describe("/api/articles/:article_id/comments", () => {
         });
       });
   });
+  test("GET: 404 /api/articles/9999/comments invalid article id", () => {
+    return request(app)
+      .get("/api/articles/99999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
 
   test("POST /api/articles/1/comments", () => {
     const newComment = {

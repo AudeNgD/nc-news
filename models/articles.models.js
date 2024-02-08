@@ -84,11 +84,14 @@ exports.fetchAllArticles = (
 };
 
 exports.fetchCommentsByArticleId = (articleId) => {
-  let queryString = `SELECT * FROM comments
+  //do the checks
+  return Promise.all([checkArticleExists(articleId)]).then(() => {
+    let queryString = `SELECT * FROM comments
   WHERE article_id=$1`;
 
-  return db.query(queryString, [articleId]).then(({ rows }) => {
-    return rows;
+    return db.query(queryString, [articleId]).then(({ rows }) => {
+      return rows;
+    });
   });
 };
 
