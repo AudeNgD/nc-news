@@ -1,38 +1,30 @@
-# Northcoders News API
+# Northcoders News
 
-THIS PROJECT
-Created a hosted service similar to reddit, where a user can post articles with associated topic.
-Other users can comment and leave votes.
+## This project
+I built the backend service for a social media news service similar to reddit, where a user can post articles relating to a topic.
+Other users can comment and leave votes too.
+This backend is built using Node.js, Express.js and PostgresSQL.
+Test Driven Development managed by using Jest and Supertest.
 
-INSTALLATION
-Clone down the repo locally.
+## Instructions
+1. Fork and clone this repo `https://github.com/AudeNgD/nc-news`
+ 
+2. In your local repo, install tghe dependencies by running `npm i`
 
-SET-UP
--> Create .env.test and .env.development files. Into each, add PGDATABASE name for that environment.
-The names are listed in the /db/setup.sql file.
-Check that the .env files are .gitignored
+3. Create a .env.test and .env.development files in the root folder of your local repo.
+In the .env.test file, add `PGDATABASE=nc_news_test`
+In the .env.development file, add `PGDATABASE=nc_news`
+NB - The db names should match the names listed in the /db/setup.sql file
 
-At this point you'll need to run npm install
+4. Check that the .env files are .gitignored
 
--> Seed the local databases by running run setup-dbs and run seed
+5. Seed the local databases by running `run setup-dbs` and `run seed`. The latter will seed the db with the development data.
 
--> Install the following dev dependencies
-husky
-jest-extended
-jest-sorted
-pg-format
-supertest
+6. Run the tests by running `npm test app` to check that all is in order.
 
--> Other dependencies
-dotenv
-express
-pg
-postgres
+## Minimum version requirements
+- PostgreSQL > 14.11
+- Node.js > 21.3.0
 
--> Run the tests by running
-npm test app
-
--> You'll need postgres > 3.4.3 and Node.js > 21.3.0
-
-LINK TO HOSTED VERSION
+## Link to the hosted version
 https://nc-news-uld9.onrender.com/
