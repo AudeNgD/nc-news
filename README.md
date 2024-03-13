@@ -9,7 +9,7 @@ Test Driven Development managed by using Jest and Supertest.
 ## Instructions
 1. Fork and clone this repo `https://github.com/AudeNgD/nc-news`
  
-2. In your local repo, install tghe dependencies by running `npm i`
+2. In your local repo, install the dependencies by running `npm i`
 
 3. Create a .env.test and .env.development files in the root folder of your local repo.
 In the .env.test file, add `PGDATABASE=nc_news_test`
